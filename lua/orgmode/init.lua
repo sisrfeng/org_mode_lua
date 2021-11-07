@@ -15,6 +15,7 @@ function Org:new()
   setmetatable(data, self)
   self.__index = self
   data:setup_autocmds()
+  vim.defer_fn(data.notify_merge, 200)
   return data
 end
 
@@ -35,6 +36,14 @@ function Org:init()
   require('orgmode.org.autocompletion').register()
   self.statusline_debounced = require('orgmode.utils').debounce('statusline', self.clock.get_statusline, 300)
   self.initialized = true
+end
+
+function Org:notify_merge()
+  local msg = {
+    '[orgmode] tree-sitter branch is now merged into master branch. You can now switch back.',
+    'Thank you for all the help and testing!',
+  }
+  vim.notify(table.concat(msg, '\n'), vim.log.levels.WARN)
 end
 
 ---@param file? string
